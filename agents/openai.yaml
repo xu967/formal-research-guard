@@ -1,0 +1,4 @@
+interface:
+  display_name: "Formal Research Guard"
+  short_description: "Keep research experiments and changes publication-ready."
+  default_prompt: "Use this skill when planning or recording formal research experiments, paper updates, code changes, timestamps, and rollback logs."
