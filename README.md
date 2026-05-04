@@ -53,6 +53,42 @@ git clone https://github.com/xu967/formal-research-guard.git "${CODEX_HOME:-$HOM
 
 安装后，重新启动 Codex 会话，使 Codex 重新发现 skill 元数据。
 
+## 使用规则
+
+安装后，在科研项目中使用 Codex 时，应遵循以下规则：
+
+1. **先写项目本地规则。** 在目标项目中维护 `Init.md`、`AGENTS.md`、`EXPERIMENT_PLAN.md`、`EXPERIMENT_TRACKER.md`、`CHANGELOG.md` 或项目自己的变更与回滚记录。这个 skill 会优先要求 Codex 读取这些文件。
+2. **正式实验要说清楚论文目标。** 如果你要跑正式实验，请在需求中说明目标论文表格、方法行、baseline、数据集、checkpoint、训练协议、评估协议、seed、指标、输出路径和日志路径。
+3. **调试实验要明确说明。** 如果你只是想做 smoke、debug、sanity check、pilot 或短训练，请在需求中明确写出“只做调试”或“只做 smoke”。否则 Codex 会默认按正式实验标准检查。
+4. **论文结果必须来自完整协议。** 不要要求 Codex 把单 seed、短训练、临时 checkpoint、synthetic substitute 或缺少 baseline 的结果写入论文正式表格。
+5. **所有正式记录必须带时间戳。** 实验结果、代码变动、论文变动、数据变动、环境变动和回滚记录都应使用 `YYYYMMDD-HHMM` 形式的时间戳。
+6. **每次变动都要有回滚方式。** 代码、论文、数据、环境和实验输出的变更都应记录如何撤销或恢复。
+7. **项目本地规则优先。** 如果本 skill 的通用规则和项目内部规则冲突，以项目内部规则为准。
+
+## 推荐提问方式
+
+正式实验请求可以这样写：
+
+```text
+请使用 formal-research-guard。我要启动正式实验，用于论文 Table 1 的 Student-MAE baseline 行。
+数据集是 XXX，checkpoint 是 XXX，训练协议是 XXX，评估协议是 XXX。
+请使用 seed 0/1/2，输出到带时间戳的目录，并记录命令、日志、指标和回滚方式。
+```
+
+论文结果写入请求可以这样写：
+
+```text
+请使用 formal-research-guard。请先检查这些结果是否满足正式论文写入条件。
+如果满足，请写入论文对应表格；如果不满足，请说明缺少哪些条件，不要直接写入。
+```
+
+调试请求可以这样写：
+
+```text
+请使用 formal-research-guard。这次只做 smoke/debug，不作为正式论文结果。
+请仍然保留日志和时间戳，但不要把结果写入论文。
+```
+
 ## 仓库结构
 
 ```text
