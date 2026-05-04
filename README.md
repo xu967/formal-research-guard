@@ -1,59 +1,59 @@
 # Formal Research Guard
 
-Formal Research Guard is a Codex skill for research projects where experiments, paper results, code changes, and rollback records must be reproducible and publication-ready.
+Formal Research Guard 是一个通用 Codex skill，用于科研项目中的正式实验、论文结果、代码变动、数据变动、环境变动、时间戳和回滚记录管理。
 
-It helps Codex avoid treating temporary runs as formal research results. The skill is intentionally project-agnostic: it does not assume a specific dataset, model, paper, lab, repository layout, or change-log filename.
+这个 skill 的目标是防止把临时实验、调试实验或不完整结果误当作正式论文结果。它不绑定具体项目、数据集、模型、论文模板、实验框架或日志文件名，适用于不同科研代码仓库。
 
-## What This Skill Enforces
+## 核心作用
 
-The skill asks Codex to treat research outputs as formal records by default.
+该 skill 会要求 Codex 默认把科研输出当作正式记录处理。
 
-It requires Codex to:
+它会约束 Codex：
 
-- Read project-local rule files before acting.
-- Avoid running partial experiments unless the user explicitly asks for debugging.
-- Confirm the paper table, method row, dataset, checkpoint, protocol, metrics, seeds, logs, outputs, and rollback method before formal experiments.
-- Keep timestamps on formal results and project changes.
-- Avoid writing incomplete, diagnostic, or short-schedule results into papers.
-- Record code, paper, data, environment, experiment, and rollback changes in the project change log when one exists.
+- 在执行任务前先读取项目本地规则文件。
+- 默认不运行只能用于调试的部分实验。
+- 在正式实验前确认论文表格、方法行、数据集、checkpoint、协议、指标、seed、日志、输出路径和回滚方式。
+- 为正式结果和项目变动保留时间戳。
+- 不把不完整、诊断性或短训练结果写入论文。
+- 在项目存在变更日志时，记录代码、论文、数据、环境、实验和回滚变动。
 
-## When To Use
+## 适用场景
 
-Use this skill when Codex works on:
+当 Codex 处理以下任务时，适合使用这个 skill：
 
-- Academic research repositories.
-- Machine learning training or evaluation runs.
-- Result tables and paper numbers.
-- LaTeX paper edits.
-- Baselines, ablations, fine-tuning, or evaluation scripts.
-- Checkpoints, datasets, or environment changes.
-- Experiment tracking and rollback records.
+- 学术科研代码仓库。
+- 机器学习训练或评估。
+- 论文结果表格和实验数字。
+- LaTeX 论文修改。
+- baseline、ablation、fine-tuning 或 evaluation 脚本。
+- checkpoint、数据集或环境变更。
+- 实验跟踪和回滚记录。
 
-## What It Does Not Do
+## 不适用内容
 
-This skill does not provide a training framework, dataset loader, paper template, or experiment runner.
+这个 skill 不提供训练框架、数据加载器、论文模板或实验运行器。
 
-It is a process guard. It helps Codex decide whether an action or result is formal enough to be recorded, compared, or written into a paper.
+它是一个流程约束工具，用于帮助 Codex 判断某个实验、结果或变动是否具备正式记录条件，是否可以写入论文，是否需要补充日志、时间戳和回滚说明。
 
-## Installation
+## 安装方式
 
-Clone this repository into your Codex skills directory:
+将仓库 clone 到 Codex skills 目录：
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 git clone git@github.com:xu967/formal-research-guard.git "${CODEX_HOME:-$HOME/.codex}/skills/formal-research-guard"
 ```
 
-If you prefer HTTPS:
+如果使用 HTTPS：
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 git clone https://github.com/xu967/formal-research-guard.git "${CODEX_HOME:-$HOME/.codex}/skills/formal-research-guard"
 ```
 
-After installation, start a new Codex session so the skill metadata can be discovered.
+安装后，重新启动 Codex 会话，使 Codex 重新发现 skill 元数据。
 
-## Repository Contents
+## 仓库结构
 
 ```text
 formal-research-guard/
@@ -64,15 +64,15 @@ formal-research-guard/
     └── formal-records.md
 ```
 
-`SKILL.md` contains the trigger metadata and core workflow.
+`SKILL.md` 包含 skill 的触发描述和核心工作流。
 
-`agents/openai.yaml` contains UI-facing skill metadata.
+`agents/openai.yaml` 包含界面展示用的 skill 元数据。
 
-`references/formal-records.md` contains a compact experiment checklist, change-log template, and paper-result gate.
+`references/formal-records.md` 包含正式实验检查清单、变更日志模板和论文结果写入门槛。
 
-## Expected Workflow
+## 预期工作流
 
-When the skill triggers, Codex should first inspect the current project for local rule files, such as:
+当该 skill 触发时，Codex 应先在当前项目中查找本地规则文件，例如：
 
 ```text
 Init.md
@@ -84,32 +84,32 @@ CHANGELOG.md
 *_变更与回滚记录.md
 ```
 
-Project-local rules take priority over the generic rules in this skill.
+如果项目本地规则和本 skill 的通用规则冲突，以项目本地规则为准。
 
-Before running a formal experiment, Codex should identify:
+在启动正式实验前，Codex 应确认：
 
 ```text
-paper table or section
-method row
-baseline coverage
-dataset
+论文表格或章节
+方法行
+baseline 覆盖范围
+数据集
 checkpoint
-training protocol
-fine-tuning protocol
-evaluation protocol
-seed list
-metrics
-output path
-log path
-timestamp
-rollback method
+训练协议
+微调协议
+评估协议
+seed 列表
+指标
+输出路径
+日志路径
+时间戳
+回滚方式
 ```
 
-If required formal conditions are missing, Codex should state the missing items instead of starting the run.
+如果这些正式条件缺失，Codex 应说明缺口，而不是直接启动实验。
 
-## Non-Formal Runs
+## 非正式实验边界
 
-The following runs must not be treated as formal results unless the user explicitly requests debugging:
+除非用户明确要求调试，否则以下实验不能作为正式论文结果：
 
 ```text
 smoke
@@ -122,70 +122,72 @@ synthetic substitute
 partial baseline set
 ```
 
-These runs may be useful for engineering checks, but they should not be written into paper tables or formal result paragraphs.
+这些实验可以用于工程排查，但不应写入论文表格或正式结果段落。
 
-## Timestamp Rule
+## 时间戳规则
 
-Every formal result and every project change must carry a timestamp.
+每个正式结果和每次项目变动都必须带时间戳。
 
-Default format:
+默认格式：
 
 ```text
 YYYYMMDD-HHMM
 ```
 
-The timestamp should appear in at least one durable location:
+时间戳应至少出现在一个持久位置中：
 
 ```text
-change log section title
-experiment log filename
-output directory
-result JSON, CSV, or JSONL filename
-checkpoint directory
-paper compilation record
-rollback entry
+变更日志小节标题
+实验日志文件名
+输出目录
+结果 JSON、CSV 或 JSONL 文件名
+checkpoint 目录
+论文编译记录
+回滚记录
 ```
 
-## Validation
+没有时间戳的结果或变动不应被视为正式记录。
 
-If you have the Codex skill-creator validation script available, validate the skill with:
+## 验证方式
+
+如果本机有 Codex skill-creator 的验证脚本，可以执行：
 
 ```bash
 python /path/to/skill-creator/scripts/quick_validate.py /path/to/formal-research-guard
 ```
 
-For example, on a system where the built-in skill-creator skill is installed under `~/.codex/skills/.system`:
+例如，在内置 skill-creator 位于 `~/.codex/skills/.system` 的环境中：
 
 ```bash
 python ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py "${CODEX_HOME:-$HOME/.codex}/skills/formal-research-guard"
 ```
 
-Expected output:
+期望输出：
 
 ```text
 Skill is valid!
 ```
 
-## Updating
+## 更新方式
 
-To update an installed copy:
+更新已安装的 skill：
 
 ```bash
 cd "${CODEX_HOME:-$HOME/.codex}/skills/formal-research-guard"
 git pull
 ```
 
-## Design Notes
+## 设计原则
 
-This skill is intentionally generic. Keep project-specific instructions in the target project, not in this skill.
+这个 skill 保持通用，不写死任何具体项目规则。
 
-Good project-local files include:
+项目专属规则应放在目标项目内部，例如：
 
 - `Init.md`
 - `AGENTS.md`
 - `EXPERIMENT_PLAN.md`
 - `EXPERIMENT_TRACKER.md`
 - `CHANGELOG.md`
-- project-specific change and rollback logs
+- 项目自己的变更与回滚记录
 
-The skill should point Codex to those files and enforce reproducibility rules around them.
+本 skill 的职责是提醒 Codex 读取这些项目规则，并围绕正式实验、论文结果、时间戳、复现性和回滚记录执行约束。
